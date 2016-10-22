@@ -1,0 +1,116 @@
+<head>
+	<style>
+	body {
+		padding: 0;
+		margin: 0;
+		font-family: Verdana, sans-serif;
+	}
+	.container{
+		padding: 0;
+		margin: 50px;
+		width: 189px;
+		display: block;
+		white-space: nowrap;
+		border-radius: 10px 10px 0 0;
+	}
+	ul.menu {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		font-size: 0;
+	}
+	ul.menu li {
+		display: inline-block;
+	}
+	ul.menu li a {
+		display: inline-block;
+		font-size: 14px;
+		width: 80px;
+		height: 20px;
+		line-height: 20px;
+		text-align: center;
+		text-decoration: none;
+		padding: 7px;
+		color: #333;
+	}
+	ul.menu li a.active {
+		background: #353d3e;
+		color: #fff;
+		border-radius: 10px 10px 0 0;
+		border: 1px solid;
+	}
+	ul.menu li a:not(.active):hover {
+		opacity: 0.5;
+		background: #777;
+		transition: .5s;
+		border-radius: 10px 10px 0 0;
+	}
+	.content {
+		font-size: 14px;
+		padding: 7px 10px;
+		line-height: 1.4;
+		background: #353d3e;
+		color: #fff;
+		min-height: 150px;
+		display: none;
+	}
+	.content.active {
+		display: block;
+	}
+	</style>
+	<script src="//maps.google.com/maps/api/js?v=3.23&key=AIzaSyDFnPr8KfmDSfEACLFEh81ll3rZ4JtPam0"></script>
+	<script src="//cdn.rawgit.com/mahnunchik/markerclustererplus/master/dist/markerclusterer.min.js"></script>
+	<script src='//cdn.rawgit.com/printercu/google-maps-utility-library-v3-read-only/master/infobox/src/infobox_packed.js'></script>
+</head>
+
+<div class="container">
+	<ul class="menu">
+		<li><a href="#" data-id="map1" class="active menu_item">保育園</a></li>
+		<li><a href="#" data-id="map2" class="menu_item">幼稚園</a></li>
+	</ul>
+	<div style='width: 800px;'>
+		<div class="content active" id="map1" style='width: 800px; height: 400px;'></div>
+	</div>
+	<div style='width: 800px;'>
+		<div class="content" id="map2" style='width: 800px; height: 400px;'></div>
+	</div>
+</div>
+
+<script>
+	var menuItems = document.getElementsByClassName('menu_item');
+	var contents = document.getElementsByClassName('content');
+
+	var i;
+
+	for(i = 0; i < menuItems.length; i++){
+		menuItems[i].addEventListener('click', function(e){
+			e.preventDefault();
+
+			var i;
+
+			for(i = 0; i < menuItems.length; i++){
+				menuItems[i].className = 'menu_item';
+			}
+
+			this.className = 'menu_item active';
+
+			for(i = 0; i < contents.length; i++){
+				contents[i].className = 'content';
+			}
+
+			document.getElementById(this.dataset.id).className = 'content active';
+		});
+	}
+	
+	handler = Gmaps.build('Google');
+	handler.buildMap({ provider: {}, internal: {id: 'map1'}}, function(){
+		markers = handler.addMarkers(<%=raw @hash.to_json %>);
+		handler.bounds.extendWith(markers);
+		handler.fitMapToBounds();
+	});
+	// handler.buildMap({ provider: {}, internal: {id: 'map2'}}, function(){
+	// 	markers = handler.addMarkers(<%=raw @hash.to_json %>);
+	// 	handler.bounds.extendWith(markers);
+	// 	handler.fitMapToBounds();
+	// });
+</script>
